@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор зарплат с учетом отпусков</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Калькулятор зарплат</h1>
+            <p class="subtitle">Расчет графика следующих 5 зарплат с учетом отпусков и производственного календаря РФ</p>
+        </header>
+
+        <main>
+            <div class="form-section" id="formSection">
+                <div class="form-group">
+                    <label for="salaryInput">💵 Введите сумму зарплаты в рублях (после вычета НДС):</label>
+                    <input 
+                        type="text" 
+                        id="salaryInput" 
+                        placeholder="Например: 50000, 50к, 1млн"
+                        autocomplete="off"
+                    >
+                    <small class="hint">
+                        Поддерживаются множители: <code>50000</code>, <code>50к</code>, <code>1млн</code>
+                    </small>
+                </div>
+
+                <div class="form-group" id="vacationGroup" style="display: none;">
+                    <label for="vacationInput">🏖 Даты отпусков (опционально):</label>
+                    <textarea 
+                        id="vacationInput" 
+                        rows="6"
+                        placeholder="Введите даты отпусков, по одной на строку:&#10;01.01.2025-15.01.2025&#10;20.02.2025&#10;10.03.2025-20.03.2025&#10;&#10;Или оставьте пустым, если отпусков нет"
+                    ></textarea>
+                    <small class="hint">
+                        Форматы: <code>01.01.2025</code> (одна дата) или <code>01.01.2025-15.01.2025</code> (диапазон)
+                    </small>
+                    <div class="file-upload">
+                        <label for="vacationFile" class="file-label">
+                            📎 Или загрузите файл (CSV, TXT)
+                        </label>
+                        <input type="file" id="vacationFile" accept=".csv,.txt,.text" style="display: none;">
+                        <span id="fileName" class="file-name"></span>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="calculateBtn" class="btn btn-primary" disabled>Рассчитать зарплаты</button>
+                    <button id="resetBtn" class="btn btn-secondary" style="display: none;">Начать заново</button>
+                </div>
+
+                <div id="loadingIndicator" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>⏳ Рассчитываю график зарплат...</p>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>💵 График следующих 5 зарплат</h2>
+                
+                <div class="summary">
+                    <div class="summary-item">
+                        <span class="label">💰 Зарплата:</span>
+                        <span class="value" id="summarySalary"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">📅 Выплаты:</span>
+                        <span class="value" id="summaryPaymentDays"></span>
+                    </div>
+                    <div class="summary-item" id="summaryVacations" style="display: none;">
+                        <span class="label">🏖 Учтено отпусков:</span>
+                        <span class="value" id="summaryVacationsCount"></span>
+                    </div>
+                </div>
+
+                <div class="salaries-list" id="salariesList"></div>
+
+                <div class="hourly-rate" id="hourlyRateSection" style="display: none;">
+                    <h3>⏰ Стоимость рабочего времени (текущий месяц)</h3>
+                    <div class="rate-item">
+                        <span class="label">1 час:</span>
+                        <span class="value" id="hourlyRate"></span>
+                    </div>
+                    <div class="rate-item">
+                        <span class="label">Переработка (×1.5):</span>
+                        <span class="value" id="overtimeRate"></span>
+                    </div>
+                </div>
+
+                <div class="footer-note">
+                    <p>🔧 Расчет по производственному календарю РФ</p>
+                    <p>⚠️ Если день выплаты - выходной, выплата переносится на предыдущий рабочий день</p>
+                </div>
+            </div>
+
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-message" id="errorMessage"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="salary-calculator.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
