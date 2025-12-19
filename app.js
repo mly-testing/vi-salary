@@ -311,27 +311,32 @@ function parseSalaryAmount(text) {
     let multiplier = 1;
     let processedText = textLower;
     
-    // Миллионы
-    if (/\d+\s*кк\b/.test(textLower)) {
+    // Сначала проверяем миллионы (кк), потом тысячи (к)
+    // Важно: проверяем "кк" ПЕРЕД "к", чтобы не спутать
+    
+    // Миллионы - проверяем "кк" (две буквы к подряд)
+    if (textLower.includes('кк')) {
         multiplier = 1000000;
-        processedText = processedText.replace(/кк\b/g, '');
-    } else if (/\d+\s*m\b/.test(textLower)) {
+        // Удаляем "кк" из текста
+        processedText = processedText.replace(/кк/g, '');
+    } else if (textLower.includes('млн') || textLower.includes('миллион')) {
         multiplier = 1000000;
-        processedText = processedText.replace(/m\b/g, '');
-    } else if (/\d+\s*(млн\.?|миллион[а-я]*)\b/.test(textLower)) {
+        processedText = processedText.replace(/(?:млн\.?|миллион[а-я]*)/g, '');
+    } else if (textLower.match(/\d+\s*m\s*$/)) {
         multiplier = 1000000;
-        processedText = processedText.replace(/(млн\.?|миллион[а-я]*)\b/g, '');
+        processedText = processedText.replace(/m\s*$/g, '');
     }
-    // Тысячи
-    else if (/\d+\s*к\b/.test(textLower)) {
+    // Тысячи - проверяем "к" (но только если нет "кк")
+    else if (textLower.includes('к') && !textLower.includes('кк')) {
         multiplier = 1000;
-        processedText = processedText.replace(/к\b/g, '');
-    } else if (/\d+\s*k\b/.test(textLower)) {
+        // Удаляем "к" из текста
+        processedText = processedText.replace(/к/g, '');
+    } else if (textLower.match(/\d+\s*k\s*$/)) {
         multiplier = 1000;
-        processedText = processedText.replace(/k\b/g, '');
-    } else if (/\d+\s*(тыс\.?|тысяч[а-я]*)\b/.test(textLower)) {
+        processedText = processedText.replace(/k\s*$/g, '');
+    } else if (textLower.includes('тыс') || textLower.includes('тысяч')) {
         multiplier = 1000;
-        processedText = processedText.replace(/(тыс\.?|тысяч[а-я]*)\b/g, '');
+        processedText = processedText.replace(/(?:тыс\.?|тысяч[а-я]*)/g, '');
     }
     
     // Извлечение числа
